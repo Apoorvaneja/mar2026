@@ -141,6 +141,10 @@
         .tea-logic-wrap { display: flex; flex-direction: column; align-items: center; gap: 2px; }
         .tea-logic-wrap label { font-size: 0.65rem; color: #64748b; font-weight: 800; margin: 0; }
 
+        /* Edit Button Styling */
+        .btn-edit-history { background: #fef9c3; color: #854d0e; border: 1px solid #fde047; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 1rem; transition: 0.2s; }
+        .btn-edit-history:hover { background: #fde047; }
+
         @media (max-width: 768px) {
             .sidebar-v4 { width: 60px; position: fixed; height: 100vh; }
             .sidebar-v4:hover { width: 220px; }
@@ -212,7 +216,7 @@
                     <div class="matrix-header"><h3>Logistics Matrix</h3><button type="button" class="btn-add-row-pill" onclick="addEntryRow()">+ Add Row</button></div>
                     <form id="bulkForm">
                         <div id="entryRowsContainer" class="matrix-container"></div>
-                        <button type="submit" class="btn-prime">SUBMIT DATA</button>
+                        <button type="submit" class="btn-prime" id="entrySubmitBtn">SUBMIT DATA</button>
                     </form>
                 </div>
             </section>
@@ -250,7 +254,7 @@
                                 </table>
                             </div>
                         </div>
-                        <button type="submit" class="btn-prime">SUBMIT</button>
+                        <button type="submit" class="btn-prime" id="canteenSubmitBtn">SUBMIT</button>
                     </form>
                 </div>
             </section>
@@ -287,7 +291,7 @@
                             <div class="input-group"><label><i class="bi bi-gender-male"></i> Male Count</label><input type="number" id="acco-male" value="0" min="0" style="font-size: 1.5rem; text-align: center; color: var(--maroon);"></div>
                             <div class="input-group"><label><i class="bi bi-gender-female"></i> Female Count</label><input type="number" id="acco-female" value="0" min="0" style="font-size: 1.5rem; text-align: center; color: var(--maroon);"></div>
                         </div>
-                        <button type="submit" class="btn-prime">SUBMIT</button>
+                        <button type="submit" class="btn-prime" id="accoSubmitBtn">SUBMIT</button>
                     </form>
                 </div>
             </section>
@@ -302,7 +306,7 @@
                     <div class="matrix-header"><h3>Material Checklist</h3><button type="button" class="btn-add-row-pill" onclick="addShamianaRow()">+ Add Row</button></div>
                     <form id="shamianaForm">
                         <div id="shamianaRowsContainer" class="matrix-container" style="gap:10px;"></div>
-                        <button type="submit" class="btn-prime">SUBMIT</button>
+                        <button type="submit" class="btn-prime" id="shamSubmitBtn">SUBMIT</button>
                     </form>
                 </div>
             </section>
@@ -319,7 +323,7 @@
                 
                 <div id="log-box" class="glass-card" style="padding:0; overflow:hidden;">
                     <table style="width:100%; border-collapse: collapse;">
-                        <thead><tr style="text-align:left; color:#94a3b8; font-size:0.75rem;"><th style="padding:20px;">Sync Time</th><th style="padding:20px;">Day</th> <th style="padding:20px;">Location</th> <th style="padding:20px;">Collect Time</th> <th style="padding:20px;">Detail (S/P/L/Tea)</th><th style="padding:20px;">Status</th></tr></thead>
+                        <thead><tr style="text-align:left; color:#94a3b8; font-size:0.75rem;"><th style="padding:20px;">Sync Time</th><th style="padding:20px;">Day</th> <th style="padding:20px;">Location</th> <th style="padding:20px;">Collect Time</th> <th style="padding:20px;">Detail (S/P/L/Tea)</th><th style="padding:20px;">Status</th><th style="padding:20px;">Edit</th></tr></thead>
                         <tbody id="logHistoryBody"></tbody>
                     </table>
                 </div>
@@ -328,7 +332,7 @@
                     <table style="width:100%; border-collapse: collapse;">
                         <thead>
                             <tr style="text-align:left; color:#94a3b8; font-size:0.75rem;">
-                                <th style="padding:20px;">Sync Time</th><th style="padding:20px;">Day</th><th style="padding:20px;">Coordinator</th><th style="padding:20px;">Requirement Details</th><th style="padding:20px;">Status</th>
+                                <th style="padding:20px;">Sync Time</th><th style="padding:20px;">Day</th><th style="padding:20px;">Coordinator</th><th style="padding:20px;">Requirement Details</th><th style="padding:20px;">Status</th><th style="padding:20px;">Edit</th>
                             </tr>
                         </thead>
                         <tbody id="canHistoryBody"></tbody>
@@ -337,21 +341,21 @@
 
                 <div id="inv-box" class="glass-card hidden" style="padding:0; overflow:hidden;">
                     <table style="width:100%; border-collapse: collapse;">
-                        <thead><tr style="text-align:left; color:#94a3b8; font-size:0.75rem;"><th style="padding:20px;">Date</th><th style="padding:20px;">Location</th><th style="padding:20px;">Article</th><th style="padding:20px;">Qty</th><th style="padding:20px;">Status</th></tr></thead>
+                        <thead><tr style="text-align:left; color:#94a3b8; font-size:0.75rem;"><th style="padding:20px;">Date</th><th style="padding:20px;">Location</th><th style="padding:20px;">Article</th><th style="padding:20px;">Qty</th><th style="padding:20px;">Status</th><th style="padding:20px;">Edit</th></tr></thead>
                         <tbody id="invHistoryBody"></tbody>
                     </table>
                 </div>
 
                 <div id="acco-box" class="glass-card hidden" style="padding:0; overflow:hidden;">
                     <table style="width:100%; border-collapse: collapse;">
-                        <thead><tr style="text-align:left; color:#94a3b8; font-size:0.75rem;"><th style="padding:20px;">Time</th><th style="padding:20px;">M-Coord</th><th style="padding:20px;">F-Coord</th><th style="padding:20px;">Male Qty</th><th style="padding:20px;">Female Qty</th><th style="padding:20px;">Status</th></tr></thead>
+                        <thead><tr style="text-align:left; color:#94a3b8; font-size:0.75rem;"><th style="padding:20px;">Time</th><th style="padding:20px;">M-Coord</th><th style="padding:20px;">F-Coord</th><th style="padding:20px;">Male Qty</th><th style="padding:20px;">Female Qty</th><th style="padding:20px;">Status</th><th style="padding:20px;">Edit</th></tr></thead>
                         <tbody id="accoHistoryBody"></tbody>
                     </table>
                 </div>
 
                 <div id="sham-box" class="glass-card hidden" style="padding:0; overflow:hidden;">
                     <table style="width:100%; border-collapse: collapse;">
-                        <thead><tr style="text-align:left; color:#94a3b8; font-size:0.75rem;"><th style="padding:20px;">Time</th><th style="padding:20px;">Coordinator</th><th style="padding:20px;">Item</th><th style="padding:20px;">Size</th><th style="padding:20px;">Qty</th><th style="padding:20px;">Status</th></tr></thead>
+                        <thead><tr style="text-align:left; color:#94a3b8; font-size:0.75rem;"><th style="padding:20px;">Time</th><th style="padding:20px;">Coordinator</th><th style="padding:20px;">Item</th><th style="padding:20px;">Size</th><th style="padding:20px;">Qty</th><th style="padding:20px;">Status</th><th style="padding:20px;">Edit</th></tr></thead>
                         <tbody id="shamHistoryBody"></tbody>
                     </table>
                 </div>
@@ -429,6 +433,7 @@
         const MEALS = ["Breakfast", "Lunch", "Dinner"];
 
         let currentUser = null, inventoryQueue = [];
+        let editState = { active: false, rowId: null, module: null };
 
         function showToast(message, type = 'success') {
             const container = document.getElementById('toast-container');
@@ -437,6 +442,68 @@
             toast.innerHTML = `<i class="bi ${type === 'error' ? 'bi-exclamation-triangle-fill' : 'bi-check-circle-fill'}"></i> ${message}`;
             container.appendChild(toast);
             setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 500); }, 3000);
+        }
+
+        function triggerEdit(module, encodedData) {
+            const data = JSON.parse(decodeURIComponent(encodedData));
+            editState = { active: true, rowId: data[0], module: module };
+            showToast("Loading Data for Edit...", "success");
+
+            if(module === 'log') {
+                navigate('entry');
+                document.getElementById('coordName').value = data[3];
+                document.getElementById('coordMobile').value = data[4];
+                document.getElementById('entryRowsContainer').innerHTML = "";
+                addEntryRow();
+                const row = document.querySelector('.crystal-row');
+                row.querySelector('.in-day').value = data[5];
+                row.querySelector('.in-meal').value = data[6];
+                row.querySelector('.in-loc').value = data[2];
+                row.querySelector('.in-time').value = data[10];
+                row.querySelector('.in-sew').value = data[7];
+                row.querySelector('.in-pac').value = data[8];
+                row.querySelector('.in-loo').value = data[9];
+                if(data[11] === "YES") {
+                    row.querySelector('.tea-trigger').checked = true;
+                    row.querySelector('.in-tea-cups').disabled = false;
+                    row.querySelector('.in-tea-cups').value = data[12];
+                }
+                document.getElementById('entrySubmitBtn').innerText = "UPDATE DATA";
+            }
+            else if(module === 'acco') {
+                navigate('accommodation');
+                document.getElementById('acco-coord-male').value = data[2];
+                document.getElementById('acco-mobile-male').value = data[3];
+                document.getElementById('acco-coord-female').value = data[4];
+                document.getElementById('acco-mobile-female').value = data[5];
+                document.getElementById('acco-male').value = data[6];
+                document.getElementById('acco-female').value = data[7];
+                document.getElementById('accoSubmitBtn').innerText = "UPDATE DATA";
+            }
+            else if(module === 'sham') {
+                navigate('shamiana');
+                document.getElementById('sham-coord').value = data[2];
+                document.getElementById('sham-mobile').value = data[3];
+                document.getElementById('shamianaRowsContainer').innerHTML = "";
+                addShamianaRow();
+                const row = document.querySelector('#shamianaRowsContainer > div');
+                row.querySelector('.sh-item').value = data[4];
+                updateShamianaSizes(row.querySelector('.sh-item'));
+                row.querySelector('.sh-size').value = data[5];
+                row.querySelector('.sh-qty').value = data[6];
+                document.getElementById('shamSubmitBtn').innerText = "UPDATE DATA";
+            }
+            else if(module === 'inv') {
+                navigate('inventory');
+                document.getElementById('inv-loc').value = data[2];
+                document.getElementById('inv-article').value = data[3];
+                document.getElementById('inv-qty').value = data[4];
+                document.getElementById('invSubmitBtn').innerText = "UPDATE DATA";
+                document.getElementById('invSubmitBtn').classList.remove('hidden');
+                // Auto-add to queue if empty, or just handle single update
+                inventoryQueue = [{ loc: data[2], art: data[3], qty: data[4], id: Date.now() }];
+                renderQueue();
+            }
         }
 
         document.addEventListener('input', function (e) {
@@ -470,34 +537,32 @@
 
         async function refreshHistory(isAuto = false) {
             const body = document.getElementById('logHistoryBody');
-            if(!isAuto) body.innerHTML = '<tr><td colspan="6" style="padding:20px; text-align:center;">📡 Loading...</td></tr>';
+            if(!isAuto) body.innerHTML = '<tr><td colspan="7" style="padding:20px; text-align:center;">📡 Loading...</td></tr>';
             const data = await fetchWithRetry(LOGISTICS_URL);
-            if (!data) { if(!isAuto) body.innerHTML = '<tr><td colspan="6" style="padding:20px; text-align:center; color:red;">❌ Sync Error.</td></tr>'; return; }
+            if (!data) { if(!isAuto) body.innerHTML = '<tr><td colspan="7" style="padding:20px; text-align:center; color:red;">❌ Sync Error.</td></tr>'; return; }
             body.innerHTML = "";
             data.filter(row => row[1] === currentUser.dept || currentUser.dept === "All Command").reverse().slice(0, 15).forEach(row => {
-                
                 const hasTea = row[11] === "YES";
                 const teaDisplay = hasTea ? `<br><span style="color:#b45309; font-size:0.8rem; font-weight:800;">☕ Tea: ${row[12]} Cups</span>` : "";
+                const encoded = encodeURIComponent(JSON.stringify(row));
 
                 body.innerHTML += `<tr>
                     <td style="padding:20px;">${new Date(row[0]).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</td>
                     <td style="padding:20px;">${row[5]}</td> 
                     <td style="padding:20px; font-weight:800; color:var(--maroon);">${row[2]}</td> 
                     <td style="padding:20px; font-weight:700;">${cleanDisplayDetails(row[10])}</td> 
-                    <td style="padding:20px;">
-                        ${row[7]}S / ${row[8]}P / ${row[9]}L
-                        ${teaDisplay}
-                    </td>
+                    <td style="padding:20px;">${row[7]}S / ${row[8]}P / ${row[9]}L ${teaDisplay}</td>
                     <td style="padding:20px; color:#10b981; font-weight:800;">✅ SYNCED</td>
+                    <td style="padding:20px;"><button class="btn-edit-history" onclick="triggerEdit('log', '${encoded}')"><i class="bi bi-pencil-square"></i></button></td>
                 </tr>`;
             });
         }
 
         async function refreshCanteenHistory(isAuto = false) {
             const body = document.getElementById('canHistoryBody');
-            if(!isAuto) body.innerHTML = '<tr><td colspan="5" style="padding:20px; text-align:center;">📡 Loading...</td></tr>';
+            if(!isAuto) body.innerHTML = '<tr><td colspan="6" style="padding:20px; text-align:center;">📡 Loading...</td></tr>';
             const data = await fetchWithRetry(CANTEEN_URL);
-            if (!data) { if(!isAuto) body.innerHTML = '<tr><td colspan="5" style="padding:20px; text-align:center; color:red;">❌ Sync Error.</td></tr>'; return; }
+            if (!data) { if(!isAuto) body.innerHTML = '<tr><td colspan="6" style="padding:20px; text-align:center; color:red;">❌ Sync Error.</td></tr>'; return; }
             body.innerHTML = "";
             data.filter(row => row[1] === currentUser.dept || currentUser.dept === "All Command").reverse().forEach(row => {
                 let itemsSummary = [];
@@ -519,28 +584,38 @@
                     <td style="padding:20px; font-weight:700;">${row[2]}</td>
                     <td style="padding:20px; font-size:0.85rem; line-height:1.6; color:#475569;">${finalDetails}</td>
                     <td style="padding:20px; color:#10b981; font-weight:800;">✅ SYNCED</td>
+                    <td style="padding:20px;"><i class="bi bi-lock-fill" title="Canteen edits via admin only"></i></td>
                 </tr>`;
             });
         }
 
         async function refreshArticleHistory(isAuto = false) {
             const body = document.getElementById('invHistoryBody');
-            if(!isAuto) body.innerHTML = '<tr><td colspan="5" style="padding:20px; text-align:center;">📡 Loading...</td></tr>';
+            if(!isAuto) body.innerHTML = '<tr><td colspan="6" style="padding:20px; text-align:center;">📡 Loading...</td></tr>';
             const data = await fetchWithRetry(ARTICLES_URL);
-            if (!data) { if(!isAuto) body.innerHTML = '<tr><td colspan="5" style="padding:20px; text-align:center; color:red;">❌ Sync Error.</td></tr>'; return; }
+            if (!data) { if(!isAuto) body.innerHTML = '<tr><td colspan="6" style="padding:20px; text-align:center; color:red;">❌ Sync Error.</td></tr>'; return; }
             body.innerHTML = "";
             data.filter(row => row[1] === currentUser.dept || currentUser.dept === "All Command").reverse().forEach(row => {
-                body.innerHTML += `<tr><td style="padding:20px;">${new Date(row[0]).toLocaleDateString()}</td><td style="padding:20px; font-weight:700;">${row[2]}</td><td style="padding:20px; font-weight:700; color:var(--maroon);">${row[3]}</td><td style="padding:20px;">${row[4]}</td><td style="padding:20px; color:#10b981; font-weight:800;">✅ SYNCED</td></tr>`;
+                const encoded = encodeURIComponent(JSON.stringify(row));
+                body.innerHTML += `<tr>
+                    <td style="padding:20px;">${new Date(row[0]).toLocaleDateString()}</td>
+                    <td style="padding:20px; font-weight:700;">${row[2]}</td>
+                    <td style="padding:20px; font-weight:700; color:var(--maroon);">${row[3]}</td>
+                    <td style="padding:20px;">${row[4]}</td>
+                    <td style="padding:20px; color:#10b981; font-weight:800;">✅ SYNCED</td>
+                    <td style="padding:20px;"><button class="btn-edit-history" onclick="triggerEdit('inv', '${encoded}')"><i class="bi bi-pencil-square"></i></button></td>
+                </tr>`;
             });
         }
 
         async function refreshAccoHistory(isAuto = false) {
             const body = document.getElementById('accoHistoryBody');
-            if(!isAuto) body.innerHTML = '<tr><td colspan="6" style="padding:20px; text-align:center;">📡 Loading...</td></tr>';
+            if(!isAuto) body.innerHTML = '<tr><td colspan="7" style="padding:20px; text-align:center;">📡 Loading...</td></tr>';
             const data = await fetchWithRetry(ACCO_URL);
-            if (!data) { if(!isAuto) body.innerHTML = '<tr><td colspan="6" style="padding:20px; text-align:center; color:red;">❌ Sync Error.</td></tr>'; return; }
+            if (!data) { if(!isAuto) body.innerHTML = '<tr><td colspan="7" style="padding:20px; text-align:center; color:red;">❌ Sync Error.</td></tr>'; return; }
             body.innerHTML = "";
             data.filter(row => row[1] === currentUser.dept || currentUser.dept === "All Command").reverse().forEach(row => {
+                const encoded = encodeURIComponent(JSON.stringify(row));
                 body.innerHTML += `<tr>
                     <td style="padding:20px;">${new Date(row[0]).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</td>
                     <td style="padding:20px; font-weight:700;">${row[2]}</td>
@@ -548,17 +623,19 @@
                     <td style="padding:20px; font-weight:800; color:var(--maroon);">${row[6]}</td>
                     <td style="padding:20px; font-weight:800; color:var(--maroon);">${row[7]}</td>
                     <td style="padding:20px; color:#10b981; font-weight:800;">✅ SYNCED</td>
+                    <td style="padding:20px;"><button class="btn-edit-history" onclick="triggerEdit('acco', '${encoded}')"><i class="bi bi-pencil-square"></i></button></td>
                 </tr>`;
             });
         }
 
         async function refreshShamHistory(isAuto = false) {
             const body = document.getElementById('shamHistoryBody');
-            if(!isAuto) body.innerHTML = '<tr><td colspan="6" style="padding:20px; text-align:center;">📡 Loading...</td></tr>';
+            if(!isAuto) body.innerHTML = '<tr><td colspan="7" style="padding:20px; text-align:center;">📡 Loading...</td></tr>';
             const data = await fetchWithRetry(SHAMIANA_URL);
-            if (!data) { if(!isAuto) body.innerHTML = '<tr><td colspan="6" style="padding:20px; text-align:center; color:red;">❌ Sync Error.</td></tr>'; return; }
+            if (!data) { if(!isAuto) body.innerHTML = '<tr><td colspan="7" style="padding:20px; text-align:center; color:red;">❌ Sync Error.</td></tr>'; return; }
             body.innerHTML = "";
             data.filter(row => row[1] === currentUser.dept || currentUser.dept === "All Command").reverse().forEach(row => {
+                const encoded = encodeURIComponent(JSON.stringify(row));
                 body.innerHTML += `<tr>
                     <td style="padding:20px;">${new Date(row[0]).toLocaleTimeString()}</td>
                     <td style="padding:20px; font-weight:700;">${row[2]}</td>
@@ -566,6 +643,7 @@
                     <td style="padding:20px;">${row[5]}</td>
                     <td style="padding:20px; font-weight:800; color:var(--maroon);">${row[6]}</td>
                     <td style="padding:20px; color:#10b981; font-weight:800;">✅ SYNCED</td>
+                    <td style="padding:20px;"><button class="btn-edit-history" onclick="triggerEdit('sham', '${encoded}')"><i class="bi bi-pencil-square"></i></button></td>
                 </tr>`;
             });
         }
@@ -591,16 +669,12 @@
         function handleLogout() { sessionStorage.removeItem('mealopsUser'); sessionStorage.removeItem('lastActivePage'); location.reload(); }
 
       function launchApp() {
-    // 1. Check for Admin Role
     if (currentUser.role === "admin") {
         showToast("Accessing Command Center...", "success");
-        setTimeout(() => {
-            window.location.href = "admin.html"; // Redirects to your dashboard
-        }, 1000);
-        return; // Stop further execution for admin
+        setTimeout(() => { window.location.href = "admin.html"; }, 1000);
+        return;
     }
 
-    // 2. Normal User Logic (Existing)
     document.getElementById('login-overlay').classList.add('hidden');
     document.getElementById('app-wrapper').classList.remove('hidden');
     document.getElementById('locked-dept-name').innerText = currentUser.dept;
@@ -612,7 +686,6 @@
     if(!document.getElementById('entryRowsContainer').children.length) addEntryRow();
     if(!document.getElementById('shamianaRowsContainer').children.length) addShamianaRow();
     
-    // Setup Canteen Matrix if empty
     const canteenBody = document.getElementById('canteenBody');
     if(!canteenBody.children.length) {
         DAYS.forEach(day => {
@@ -766,10 +839,18 @@
             if (mobile.length !== 10) return showToast("Mobile must be EXACTLY 10 digits!", "error");
             const rows = document.querySelectorAll('#shamianaRowsContainer > div');
             let data = [];
-            rows.forEach(r => { data.push({ dept: currentUser.dept, coord, mobile, item: r.querySelector('.sh-item').value, size: r.querySelector('.sh-size').value, qty: r.querySelector('.sh-qty').value }); });
+            rows.forEach(r => { data.push({ 
+                editId: editState.active ? editState.rowId : null,
+                dept: currentUser.dept, coord, mobile, item: r.querySelector('.sh-item').value, size: r.querySelector('.sh-size').value, qty: r.querySelector('.sh-qty').value 
+            }); });
             showToast("Syncing...");
             this.reset(); navigate('history'); switchHistoryTab('sham');
-            fetch(SHAMIANA_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ entries: data }) }).then(() => { showToast("Synced!"); setTimeout(() => refreshShamHistory(true), 1500); });
+            fetch(SHAMIANA_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ entries: data }) }).then(() => { 
+                showToast("Synced!"); 
+                editState = { active: false, rowId: null, module: null };
+                document.getElementById('shamSubmitBtn').innerText = "SUBMIT";
+                setTimeout(() => refreshShamHistory(true), 1500); 
+            });
         });
 
         document.getElementById('bulkForm').addEventListener('submit', function(e) {
@@ -784,6 +865,7 @@
                 const day = row.querySelector('.in-day').value, meal = row.querySelector('.in-meal').value, loc = row.querySelector('.in-loc').value, time = row.querySelector('.in-time').value;
                 if (!day || !meal || !loc || !time) return;
                 rowData.push({ 
+                    editId: editState.active ? editState.rowId : null,
                     dept: currentUser.dept, loc, coordName, coordMobile, day, meal, time,
                     sew: parseInt(row.querySelector('.in-sew').value) || 0, 
                     pac: parseInt(row.querySelector('.in-pac').value) || 0, 
@@ -795,7 +877,11 @@
             showToast("Syncing...");
             document.getElementById('coordName').value = ""; document.getElementById('coordMobile').value = "";
             document.getElementById('entryRowsContainer').innerHTML = ""; addEntryRow();
-            fetch(LOGISTICS_URL, { method: 'POST', body: JSON.stringify({ entries: rowData }) }).then(() => { setTimeout(() => refreshHistory(true), 1500); }); 
+            fetch(LOGISTICS_URL, { method: 'POST', body: JSON.stringify({ entries: rowData }) }).then(() => { 
+                editState = { active: false, rowId: null, module: null };
+                document.getElementById('entrySubmitBtn').innerText = "SUBMIT DATA";
+                setTimeout(() => refreshHistory(true), 1500); 
+            }); 
             navigate('history'); switchHistoryTab('log');
         });
 
@@ -817,9 +903,21 @@
         function submitInventory() {
             if (inventoryQueue.length === 0) return;
             showToast("Submitting...");
-            const payload = { entries: inventoryQueue.map(i => ({ dept: currentUser.dept, loc: i.loc, art: i.art, qty: i.qty })) };
+            const payload = { 
+                entries: inventoryQueue.map(i => ({ 
+                    editId: editState.active ? editState.rowId : null,
+                    dept: currentUser.dept, 
+                    loc: i.loc, 
+                    art: i.art, 
+                    qty: i.qty 
+                })) 
+            };
             inventoryQueue = []; renderQueue(); navigate('history'); switchHistoryTab('inv');
-            fetch(ARTICLES_URL, { method: 'POST', body: JSON.stringify(payload) }).then(() => { setTimeout(() => refreshArticleHistory(true), 1500); });
+            fetch(ARTICLES_URL, { method: 'POST', body: JSON.stringify(payload) }).then(() => { 
+                editState = { active: false, rowId: null, module: null };
+                document.getElementById('invSubmitBtn').innerText = "SUBMIT";
+                setTimeout(() => refreshArticleHistory(true), 1500); 
+            });
         }
 
         document.getElementById('accommodationForm').addEventListener('submit', function(e) {
@@ -834,6 +932,7 @@
             
             const payload = { 
                 entries: [{
+                    editId: editState.active ? editState.rowId : null,
                     dept: currentUser.dept, 
                     maleCoord: coordMale, 
                     maleMobile: mobileMale, 
@@ -846,7 +945,12 @@
             
             showToast("Syncing...");
             this.reset(); navigate('history'); switchHistoryTab('acco');
-            fetch(ACCO_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) }).then(() => { showToast("Synced!"); setTimeout(() => refreshAccoHistory(true), 1500); });
+            fetch(ACCO_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) }).then(() => { 
+                showToast("Synced!"); 
+                editState = { active: false, rowId: null, module: null };
+                document.getElementById('accoSubmitBtn').innerText = "SUBMIT";
+                setTimeout(() => refreshAccoHistory(true), 1500); 
+            });
         });
 
         const togglePassword = document.getElementById('togglePassword');
