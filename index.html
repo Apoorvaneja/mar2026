@@ -629,7 +629,7 @@
             const data = await fetchWithRetry(LOGISTICS_URL);
             if (!data) { if(!isAuto) body.innerHTML = '<tr><td colspan="8" style="padding:20px; text-align:center; color:red;">❌ Sync Error.</td></tr>'; return; }
             body.innerHTML = "";
-            data.filter(row => row[1] === currentUser.dept || currentUser.dept === "All Command").reverse().slice(0, 15).forEach(row => {
+            data.filter(row => row[1] === currentUser.dept || currentUser.dept === "All Command").reverse().forEach(row => {
                 const hasTea = row[11] === "YES";
                 const teaDisplay = hasTea ? `<br><span style="color:#b45309; font-size:0.8rem; font-weight:800;">☕ Tea: ${row[12]} Cups</span>` : "";
                 const encoded = encodeURIComponent(JSON.stringify(row));
@@ -1112,4 +1112,5 @@
         }
     </script>
 </body>
+
 </html>
