@@ -1,0 +1,1144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Visit Requirements</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --maroon: #800000;
+            --gold: #d4af37;
+            --dark: #0f172a;
+            --bg: #f8fafc;
+            --border: #e2e8f0;
+            --highlight: rgba(212, 175, 55, 0.1);
+        }
+        
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            margin: 0; 
+            background: var(--bg); 
+            color: #1e293b; 
+            overflow-x: hidden; 
+        }
+
+        .hidden { display: none !important; }
+        .app-layout { display: flex; height: 100vh; width: 100vw; overflow: hidden; }
+
+        /* --- SIDEBAR CONFIG --- */
+        .sidebar-v4 { 
+            width: 80px; 
+            height: 100vh; 
+            background: var(--dark); 
+            display: flex; 
+            flex-direction: column; 
+            padding: 0; 
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden; 
+            white-space: nowrap; 
+            z-index: 1000;
+            border-right: 1px solid rgba(255,255,255,0.05); 
+            flex-shrink: 0;
+        }
+        .sidebar-v4:hover { width: 260px; }
+        
+        .nav-list { 
+            display: flex; 
+            flex-direction: column; 
+            width: 100%; 
+            margin-top: 20px; 
+        }
+
+        .nav-item { 
+            width: 100%; 
+            height: 64px; 
+            background: transparent; 
+            border: none; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            padding: 0 28px; 
+            color: #94a3b8; 
+            text-decoration: none; 
+            transition: 0.2s; 
+            outline: none; 
+        }
+
+        .nav-item i { font-size: 1.4rem; min-width: 32px; text-align: center; }
+        .nav-item span { margin-left: 20px; font-weight: 700; font-size: 0.95rem; opacity: 0; transition: opacity 0.2s; }
+        .sidebar-v4:hover .nav-item span { opacity: 1; }
+        .nav-item:hover { color: var(--gold); background: rgba(255,255,255,0.05); }
+        .nav-item.active { color: white; background: var(--maroon); }
+        
+        .sub-nav { background: rgba(0,0,0,0.2); display: none; }
+        .sub-nav.show { display: block; }
+        .nav-item.sub { height: 50px; padding-left: 50px; font-size: 0.85rem; }
+
+        .logout-item { margin-top: auto; margin-bottom: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px; }
+
+        /* --- MAIN VIEWPORT --- */
+        .viewport { flex: 1; height: 100vh; padding: 40px; overflow-y: auto; box-sizing: border-box; }
+        .v-header h1 { font-size: 2.25rem; font-weight: 800; margin: 0 0 40px 0; color: var(--dark); letter-spacing: -1.5px; }
+
+        .glass-card { background: white; padding: 35px; border-radius: 30px; border: 1px solid var(--border); margin-bottom: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.03); }
+        .contact-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-bottom: 30px; }
+        .input-group label { font-size: 0.75rem; font-weight: 800; color: #64748b; text-transform: uppercase; margin-bottom: 8px; display: block; }
+        input, select { padding: 14px 18px; border-radius: 14px; border: 1px solid var(--border); background: #fff; font-family: inherit; font-size: 0.95rem; font-weight: 600; outline: none; width: 100%; box-sizing: border-box; }
+
+        .matrix-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .matrix-header h3 { font-size: 1.8rem; font-weight: 800; margin: 0; color: #1a202c; }
+        .btn-add-row-pill { background: #f0f4f8; border: 1px solid #cbd5e0; color: #0f172a; padding: 8px 24px; border-radius: 50px; font-weight: 700; font-size: 1.1rem; cursor: pointer; transition: 0.2s; width: fit-content; }
+
+        .matrix-container { background: #f8fafc; padding: 25px; border-radius: 20px; border: 1px solid var(--border); display: flex; flex-direction: column; gap: 12px; overflow-x: auto; }
+        
+        .crystal-row { 
+            display: grid; 
+            grid-template-columns: 1fr 0.9fr 1.2fr 0.8fr 0.8fr 0.8fr 0.8fr 0.6fr 0.7fr 1.5fr 40px; 
+            gap: 12px; background: white; padding: 12px 18px; border-radius: 12px; 
+            align-items: center; border: 1px solid var(--border); min-width: 1450px;
+        }
+
+        .btn-prime { width: 100%; padding: 22px; background: var(--maroon); color: var(--gold); border: none; border-radius: 20px; font-weight: 900; cursor: pointer; font-size: 1.1rem; margin-top: 30px; text-transform: uppercase; }
+
+        /* --- FIXED CANTEEN TABLE LOGIC --- */
+        .canteen-scroll-pane {
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            background: white;
+        }
+
+        .canteen-table { 
+            width: 100%; 
+            border-collapse: separate; 
+            border-spacing: 0;
+            min-width: 1800px; 
+        }
+
+        .canteen-table th { 
+            background: var(--dark); 
+            color: white; 
+            font-size: 0.7rem; 
+            padding: 12px; 
+            text-transform: uppercase; 
+            border-right: 1px solid rgba(255,255,255,0.1);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* Sticky sidebar day column */
+        .canteen-table td:first-child, 
+        .canteen-table th:first-child {
+            position: sticky;
+            left: 0;
+            z-index: 10;
+            background: #f8fafc;
+            border-right: 2px solid var(--gold) !important;
+            min-width: 120px;
+            text-align: center;
+            font-weight: 800;
+        }
+
+        .canteen-table th:first-child { background: var(--dark); z-index: 11; }
+
+        .canteen-table tr:hover { background: #fcfcfc; }
+        
+        /* Row Highlight effect */
+        .canteen-table tr:has(input:focus), 
+        .canteen-table tr:has(select:focus) {
+            background-color: var(--highlight) !important;
+        }
+
+        .canteen-table td { border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 5px; }
+        .canteen-table input { border: 1px solid #ddd; border-radius: 8px; padding: 8px; text-align: center; font-size: 0.85rem; width: 100%; box-sizing: border-box; }
+        .canteen-table select { border: 1px solid #ddd; border-radius: 8px; padding: 8px; font-size: 0.85rem; width: 100%; cursor: pointer; }
+        .time-locked-error { background-color: #fee2e2 !important; color: #ef4444 !important; border: 1px solid #ef4444 !important; }
+
+        .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 5000; animation: fadeIn 0.3s ease; }
+        .modal-card { background: white; width: 90%; max-width: 500px; padding: 40px; border-radius: 30px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); border: 2px solid var(--maroon); }
+        .modal-card i { font-size: 4rem; color: var(--maroon); margin-bottom: 20px; display: block; }
+        .modal-card h2 { color: var(--dark); font-weight: 800; margin-bottom: 20px; letter-spacing: -1px; }
+        .modal-msg { background: #f8fafc; padding: 15px; border-radius: 15px; border-left: 5px solid var(--gold); margin-bottom: 12px; text-align: left; font-weight: 700; color: var(--dark); font-size: 0.95rem; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .queue-header { display: grid; grid-template-columns: 1.5fr 2fr 1.5fr 80px; padding: 10px 25px; color: #94a3b8; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; border-bottom: 1px solid var(--border); }
+        .queue-item { display: grid; grid-template-columns: 1.5fr 2fr 1.5fr 80px; align-items: center; background: #fff; padding: 15px 25px; border-bottom: 1px solid var(--border); }
+        .btn-delete { background: none; border: none; color: #ef4444; font-size: 1.5rem; cursor: pointer; }
+
+        .tab-nav { 
+            display: flex; align-items: center; background: #eef2f6; padding: 6px; border-radius: 18px; gap: 5px; margin-bottom: 30px; border: 1px solid var(--border);
+        }
+        .tab-btn { 
+            padding: 12px 28px; border: none; background: transparent; font-size: 0.95rem; cursor: pointer; color: #64748b; font-weight: 700; border-radius: 14px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); display: flex; align-items: center; gap: 8px;
+        }
+        .tab-btn:hover { color: var(--maroon); background: rgba(128, 0, 0, 0.03); }
+        .tab-btn.active { background: white; color: var(--maroon); box-shadow: 0 4px 12px rgba(0,0,0,0.08); transform: translateY(-1px); }
+
+        #toast-container { position: fixed; bottom: 30px; right: 30px; z-index: 9999; }
+        .toast { background: #10b981; color: white; padding: 16px 28px; border-radius: 12px; font-weight: 700; box-shadow: 0 10px 25px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 12px; animation: slideIn 0.3s ease-out; margin-top: 10px; }
+        .toast.error { background: #ef4444; }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+        .auth-viewport { position: fixed; inset: 0; background: var(--dark); display: flex; align-items: center; justify-content: center; z-index: 3000; }
+        .pass-container { position: relative; width: 100%; }
+        #login-error { color: #ff4d4d; margin-top: 15px; font-size: 0.85rem; font-weight: 700; background: rgba(255,77,77,0.1); padding: 10px; border-radius: 8px; display: none; border: 1px solid rgba(255,77,77,0.2); animation: errorShake 0.4s ease; }
+        @keyframes errorShake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
+
+        .tea-logic-wrap { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+        .tea-logic-wrap label { font-size: 0.65rem; color: #64748b; font-weight: 800; margin: 0; }
+
+        .btn-edit-history { background: #fef9c3; color: #854d0e; border: 1px solid #fde047; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 1rem; transition: 0.2s; }
+        .btn-edit-history:hover { background: #fde047; }
+
+        @media (max-width: 768px) {
+            .sidebar-v4 { width: 60px; position: fixed; height: 100vh; }
+            .sidebar-v4:hover { width: 220px; }
+            .viewport { padding: 20px; margin-left: 60px; width: calc(100vw - 60px); }
+            .contact-grid { grid-template-columns: 1fr; }
+            .tab-nav { width: 100%; display: grid; grid-template-columns: 1fr 1fr; }
+            .tab-btn { padding: 10px 5px; font-size: 0.75rem; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="canteen-alert" class="modal-overlay hidden">
+        <div class="modal-card">
+            <i class="bi bi-exclamation-octagon-fill"></i>
+            <h2>IMPORTANT NOTICE</h2>
+            <div class="modal-msg">1. ALL BULK ORDERS WILL BE AVAILABLE FROM CANTEEN No. 4</div>
+            <div class="modal-msg">2. DEPARTMENTS TO BRING THEIR OWN UTENSILS.</div>
+            <button class="btn-prime" onclick="closeCanteenAlert()">I UNDERSTAND</button>
+        </div>
+    </div>
+
+    <div id="login-overlay" class="auth-viewport">
+        <div style="width: 90%; max-width: 400px; text-align: center;">
+            <h1 style="letter-spacing:-2px; color:white; font-size: 2.5rem; margin-bottom: 30px;">Requirements for Satsang Programme</h1><span style="color: var(--gold); font-weight: bold; letter-spacing: 1.5px; font-size: 1.7rem;">MAR-2026</span><br><br>
+            <form id="loginForm">
+                <input type="text" id="username" placeholder="Department ID" required style="width:100%; padding:18px; margin-bottom:12px; border-radius:12px; border:none; background:rgba(255,255,255,0.05); color:white;">
+                <div class="pass-container">
+                    <input type="password" id="password" placeholder="Master Key" required style="width:100%; padding:18px; border-radius:12px; border:none; background:rgba(255,255,255,0.05); color:white; margin-bottom:12px;">
+                    <i class="bi bi-eye-slash" id="togglePassword" style="position:absolute; right:15px; top:18px; color:rgba(255,255,255,0.5); cursor:pointer;"></i>
+                </div>
+                <button type="submit" class="btn-prime">LOGIN</button>
+                <div id="login-error">Access Denied</div>
+            </form>
+        </div>
+    </div>
+
+    <div id="app-wrapper" class="app-layout hidden">
+        <aside class="sidebar-v4" id="sidebar">
+            <div class="nav-list">
+                <button onclick="toggleLangar()" id="nav-langar" class="nav-item">
+                    <i class="bi bi-egg-fried"></i><span>Langar</span>
+                </button>
+                <div id="langar-sub" class="sub-nav">
+                    <button onclick="navigate('entry')" id="nav-entry" class="nav-item sub"><i class="bi bi-pencil-square"></i><span>Consolidated Meals</span></button>
+                    <button onclick="navigate('inventory')" id="nav-inventory" class="nav-item sub"><i class="bi bi-box-seam"></i><span>Article Requirements</span></button>
+                </div>
+
+                <button onclick="navigate('canteen')" id="nav-canteen" class="nav-item"><i class="bi bi-cup-hot"></i><span>Canteen</span></button>
+                <button onclick="navigate('accommodation')" id="nav-accommodation" class="nav-item"><i class="bi bi-house-door"></i><span>Accommodation</span></button>
+                <button onclick="navigate('shamiana')" id="nav-shamiana" class="nav-item"><i class="bi bi-grid-3x3-gap"></i><span>Shamiana</span></button>
+                <button onclick="navigate('history')" id="nav-history" class="nav-item"><i class="bi bi-clock-history"></i><span>Cloud History</span></button>
+            </div>
+            <button onclick="handleLogout()" class="nav-item logout-item"><i class="bi bi-power"></i><span>Sign Out</span></button>
+        </aside>
+
+        <main class="viewport">
+            <div id="global-coordinators-banner" style="background:#fff5f5; border:1px solid #fed7d7; padding:15px; border-radius:20px; margin-bottom:25px; display:flex; justify-content:space-around; font-weight:700; color:var(--maroon);">
+            </div>
+
+            <section id="page-entry">
+                <header class="v-header"><h1>Department: <span id="locked-dept-name">...</span></h1></header>
+                <div class="glass-card">
+                    <div class="contact-grid" style="grid-template-columns: repeat(3, 1fr);">
+                        <div id="dept-input-container"></div>
+                        <div class="input-group"><label>Coordinator Name *</label><input type="text" id="coordName" placeholder="Enter Name" required></div>
+                        <div class="input-group"><label>Mobile Number *</label><input type="tel" id="coordMobile" placeholder="10 Digits Only" required maxlength="10" pattern="\d{10}" class="tel-input"></div>
+                    </div>
+                    <div class="matrix-header"><h3>Logistics Matrix</h3><button type="button" class="btn-add-row-pill" onclick="addEntryRow()">+ Add Row</button></div>
+                    <form id="bulkForm">
+                        <div id="entryRowsContainer" class="matrix-container"></div>
+                        <button type="submit" class="btn-prime" id="entrySubmitBtn">SUBMIT DATA</button>
+                    </form>
+                </div>
+            </section>
+
+            <section id="page-canteen" class="hidden">
+                <header class="v-header"><h1>Canteen Requirements</h1></header>
+                <div class="glass-card">
+                    <div class="contact-grid" style="grid-template-columns: 1fr 1fr 1.5fr;">
+                        <div class="input-group"><label>Coordinator Name *</label><input type="text" id="canCoord" placeholder="Enter Name" required></div>
+                        <div class="input-group"><label>Mobile Number *</label><input type="tel" id="canMobile" placeholder="10 Digits Only" required maxlength="10" pattern="\d{10}" class="tel-input"></div>
+                        <div class="input-group"><label>General Remarks (Canteen)</label><input type="text" id="canRemarks" placeholder="Add remarks for canteen..."></div>
+                    </div>
+                    <div class="matrix-header"><h3>Daily Requirement Matrix</h3></div>
+                    <form id="canteenForm">
+                        <div class="canteen-scroll-pane">
+                                <table class="canteen-table">
+                                    <thead>
+                                        <tr>
+                                            <th rowspan="2">Day</th>
+                                            <th colspan="2">Tea</th>
+                                            <th colspan="2">Milk</th>
+                                            <th colspan="2">Poha/Upma (03:00A.M-12:00P.M)</th>
+                                            <th colspan="2">Pakoda/Samosa (15:00P.M-18:00P.M)</th>
+                                            <th colspan="6">Other Items</th>
+                                        </tr>
+                                        <tr style="background:rgba(15, 23, 42, 0.9); font-size:0.6rem;">
+                                            <th>Cups</th><th>Time</th>
+                                            <th>Cups</th><th>Time</th>
+                                            <th>Qty</th><th>Time</th>
+                                            <th>Qty</th><th>Time</th>
+                                            <th>Fruit Drink</th><th>Biscuits</th><th>Rusk</th><th>Pack Lunch</th><th colspan="2">Fruit</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="canteenBody"></tbody>
+                                </table>
+                        </div>
+                        <button type="submit" class="btn-prime" id="canteenSubmitBtn">SUBMIT</button>
+                    </form>
+                </div>
+            </section>
+
+            <section id="page-inventory" class="hidden">
+                <header class="v-header"><h1>Article Requirements</h1></header>
+                <div class="glass-card">
+                    <div class="contact-grid" style="grid-template-columns: 1fr 1fr 0.8fr auto; align-items: flex-end;">
+                        <div class="input-group"><label>Location</label><select id="inv-loc"></select></div>
+                        <div class="input-group"><label>Article Selection</label><select id="inv-article"><option value="" disabled selected>Choose Item...</option><option>THALI</option><option>BUCKET</option><option>KARCHI/DORI</option><option>CLOTHS</option><option>TOKRI</option><option>MUG(BIG)</option><option>SABZI CAN</option><option>CRATE</option><option>GLASS</option><option>CHAPATI BOX</option><option>SPOONS</option><option>RICE TUB</option><option>TUB BIG</option><option>SERVICE TRAY</option><option>SS TABLE</option><option>UTENSILS CART</option><option>TAAT ROLL</option><option>WASHING TUBS</option><option>OTHERS</option></select></div>
+                        <div class="input-group"><label>Quantity</label><input type="number" id="inv-qty" placeholder="Qty"></div>
+                        <button type="button" class="btn-prime" style="margin:0; padding: 14px 28px;" onclick="addToQueue()">ADD TO LIST</button>
+                    </div>
+                    <div class="matrix-container" style="padding:0; overflow:hidden; margin-top:25px; border:1px solid var(--border); background:white;">
+                        <div class="queue-header"><span>Location</span><span>Article</span><span>Quantity</span><span>Action</span></div>
+                        <div id="inv-queue-body"></div>
+                    </div>
+                    <button id="invSubmitBtn" class="btn-prime hidden" onclick="submitInventory()">SUBMIT</button>
+                </div>
+            </section>
+
+            <section id="page-accommodation" class="hidden">
+                <header class="v-header"><h1>Accommodation Requirements</h1></header>
+                <div class="glass-card">
+                    <form id="accommodationForm">
+                        <div class="contact-grid">
+                            <div class="input-group"><label>Male Coordinator Name *</label><input type="text" id="acco-coord-male" placeholder="Enter Name" required></div>
+                            <div class="input-group"><label>Male Mobile Number *</label><input type="tel" id="acco-mobile-male" placeholder="10 Digits Only" required maxlength="10" pattern="\d{10}" class="tel-input"></div>
+                            <div class="input-group"><label>Female Coordinator Name *</label><input type="text" id="acco-coord-female" placeholder="Enter Name" required></div>
+                            <div class="input-group"><label>Female Mobile Number *</label><input type="tel" id="acco-mobile-female" placeholder="10 Digits Only" required maxlength="10" pattern="\d{10}" class="tel-input"></div>
+                        </div>
+                        <div class="matrix-header"><h3>Requirement Count</h3></div>
+                        <div class="matrix-container" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                            <div class="input-group"><label><i class="bi bi-gender-male"></i> Male Count</label><input type="number" id="acco-male" value="0" min="0" style="font-size: 1.5rem; text-align: center; color: var(--maroon);"></div>
+                            <div class="input-group"><label><i class="bi bi-gender-female"></i> Female Count</label><input type="number" id="acco-female" value="0" min="0" style="font-size: 1.5rem; text-align: center; color: var(--maroon);"></div>
+                        </div>
+                        <button type="submit" class="btn-prime" id="accoSubmitBtn">SUBMIT</button>
+                    </form>
+                </div>
+            </section>
+
+            <section id="page-shamiana" class="hidden">
+                <header class="v-header"><h1>Shamiana Requirements</h1></header>
+                <div class="glass-card">
+                    <div class="contact-grid" style="grid-template-columns: 1fr 1fr;">
+                        <div class="input-group"><label>Coordinator Name *</label><input type="text" id="sham-coord" placeholder="Enter Name" required></div>
+                        <div class="input-group"><label>Mobile Number *</label><input type="tel" id="sham-mobile" placeholder="10 Digits Only" required maxlength="10" pattern="\d{10}" class="tel-input"></div>
+                    </div>
+                    <div class="matrix-header"><h3>Material Checklist</h3><button type="button" class="btn-add-row-pill" onclick="addShamianaRow()">+ Add Row</button></div>
+                    <form id="shamianaForm">
+                        <div id="shamianaRowsContainer" class="matrix-container" style="gap:10px;"></div>
+                        <button type="submit" class="btn-prime" id="shamSubmitBtn">SUBMIT</button>
+                    </form>
+                </div>
+            </section>
+
+            <section id="page-history" class="hidden">
+                <header class="v-header"><h1>Cloud History</h1></header>
+                <div class="tab-nav">
+                    <button id="tab-log" class="tab-btn active" onclick="switchHistoryTab('log')"><i class="bi bi-calendar-event"></i>Consolidated Meals</button>
+                    <button id="tab-can" class="tab-btn" onclick="switchHistoryTab('can')"><i class="bi bi-cup-hot"></i> Canteen</button>
+                    <button id="tab-inv" class="tab-btn" onclick="switchHistoryTab('inv')"><i class="bi bi-box"></i> Articles</button>
+                    <button id="tab-acco" class="tab-btn" onclick="switchHistoryTab('acco')"><i class="bi bi-houses"></i> Accommodation</button>
+                    <button id="tab-sham" class="tab-btn" onclick="switchHistoryTab('sham')"><i class="bi bi-grid-3x3-gap"></i> Shamiana</button>
+                    <button onclick="exportActiveTableToCSV()" class="tab-btn" style="background: #10b981; color: white; margin-left: auto; border-radius: 12px;">
+                        <i class="bi bi-file-earmark-spreadsheet"></i> EXPORT CSV
+                    </button>
+                </div>
+                
+                <div id="log-box" class="glass-card" style="padding:0; overflow:hidden;">
+                    <table style="width:100%; border-collapse: collapse;">
+                        <thead><tr style="text-align:left; color:#94a3b8; font-size:0.75rem;"><th style="padding:20px;">Sync Time</th><th style="padding:20px;">Day</th> <th style="padding:20px;">Location</th> <th style="padding:20px;">Collect Time</th> <th style="padding:20px;">Detail (S/P/L/Tea)</th><th style="padding:20px;">Remarks</th><th style="padding:20px;">Status</th><th style="padding:20px;">Edit</th></tr></thead>
+                        <tbody id="logHistoryBody"></tbody>
+                    </table>
+                </div>
+
+                <div id="can-box" class="glass-card hidden" style="padding:0; overflow:hidden;">
+                    <table style="width:100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="text-align:left; color:#94a3b8; font-size:0.75rem;">
+                                <th style="padding:20px;">Sync Time</th><th style="padding:20px;">Day</th><th style="padding:20px;">Coordinator</th><th style="padding:20px;">Requirement Details</th><th style="padding:20px;">Remarks</th><th style="padding:20px;">Status</th><th style="padding:20px;">Edit</th>
+                            </tr>
+                        </thead>
+                        <tbody id="canHistoryBody"></tbody>
+                    </table>
+                </div>
+
+                <div id="inv-box" class="glass-card hidden" style="padding:0; overflow:hidden;">
+                    <table style="width:100%; border-collapse: collapse;">
+                        <thead><tr style="text-align:left; color:#94a3b8; font-size:0.75rem;"><th style="padding:20px;">Date</th><th style="padding:20px;">Location</th><th style="padding:20px;">Article</th><th style="padding:20px;">Qty</th><th style="padding:20px;">Status</th><th style="padding:20px;">Edit</th></tr></thead>
+                        <tbody id="invHistoryBody"></tbody>
+                    </table>
+                </div>
+
+                <div id="acco-box" class="glass-card hidden" style="padding:0; overflow:hidden;">
+                    <table style="width:100%; border-collapse: collapse;">
+                        <thead><tr style="text-align:left; color:#94a3b8; font-size:0.75rem;"><th style="padding:20px;">Time</th><th style="padding:20px;">M-Coord</th><th style="padding:20px;">F-Coord</th><th style="padding:20px;">Male Qty</th><th style="padding:20px;">Female Qty</th><th style="padding:20px;">Status</th><th style="padding:20px;">Edit</th></tr></thead>
+                        <tbody id="accoHistoryBody"></tbody>
+                    </table>
+                </div>
+
+                <div id="sham-box" class="glass-card hidden" style="padding:0; overflow:hidden;">
+                    <table style="width:100%; border-collapse: collapse;">
+                        <thead><tr style="text-align:left; color:#94a3b8; font-size:0.75rem;"><th style="padding:20px;">Time</th><th style="padding:20px;">Coordinator</th><th style="padding:20px;">Item</th><th style="padding:20px;">Size</th><th style="padding:20px;">Qty</th><th style="padding:20px;">Status</th><th style="padding:20px;">Edit</th></tr></thead>
+                        <tbody id="shamHistoryBody"></tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+    <div id="toast-container"></div>
+
+    <script>
+        const LOGISTICS_URL = "https://script.google.com/macros/s/AKfycbwtAiTQN77MIS-HN6dyF_iuQe4pa1WeCTOyKBUjwqhpsnoJNtyI36Df7vaoF5YlvjpaLg/exec";
+        const ARTICLES_URL = "https://script.google.com/macros/s/AKfycbyUMQ5FWHK5g_-Qk4HOVS05YWaLFSP8GA1jQMP0qIjs8RCJHMSkUipNOeuQL7Yk1w1p/exec"; 
+        const ACCO_URL = "https://script.google.com/macros/s/AKfycbyVEhi7uN6N83bLtODsOQj5yP0NJX1VrXXa0HvlBAqTmmcuY5ddnNRVuBTNlau8oG_Dow/exec";
+        const SHAMIANA_URL = "https://script.google.com/macros/s/AKfycbyj8TBontMhVfA5PCiQDzMjE40T6lvbSP-aQSuMDaga7qI34aO-4JbUtsLOcqrBc7wh/exec"; 
+        const CANTEEN_URL = "https://script.google.com/macros/s/AKfycbzsGsitdepaCHSUAMW4mPSRbxaJG4BBdhgCwwHO9w_IuyT00Ht_6lWR6svkcprs7_iXHg/exec"; 
+
+        const ACCOUNTS = {
+            "admin": { pass: "ss@12345", role: "admin", dept: "All Command" },
+            "accomodation": { pass: "accommodation@12345", role: "user", dept: "ACCOMODATION" },
+            "accounts": { pass: "accounts@12345", role: "user", dept: "ACCOUNTS" },
+            "administration": { pass: "administration@12345", role: "user", dept: "ADMINISTRATION" },
+            "pandal": { pass: "pandal@12345", role: "user", dept: "PANDAL" },
+            "shamiana": { pass: "shamiana@12345", role: "user", dept: "SHAMIANA" },
+            "security": { pass: "security@12345", role: "user", dept: "SECURITY" },
+            "audiovisual": { pass: "av@12345", role: "user", dept: "AUDIO - VISUAL" },          
+            "booksaudiovideo": { pass: "bav@12345", role: "user", dept: "B.A.V" },
+            "baalpathi": { pass: "baalpathi@12345", role: "user", dept: "BAAL PATHI" },
+            "baalsatsangkarta": { pass: "bsk@12345", role: "user", dept: "BAAL SATSANG KARTA" },
+            "bhatistore": { pass: "bst@12345", role: "user", dept: "BHATI STORE" },
+            "canteen": { pass: "canteen@12345", role: "user", dept: "CANTEEN" },
+            "coupons": { pass: "coupons@12345", role: "user", dept: "COUPONS" },
+            "delhi": { pass: "delhi@12345", role: "user", dept: "DELHI" },
+            "electric": { pass: "electric@12345", role: "user", dept: "ELECTRIC" },
+            "engineering": { pass: "engineering@12345", role: "user", dept: "ENGINEERING" },
+            "guesthouse": { pass: "guesthouse@12345", role: "user", dept: "GUEST HOUSE" },
+            "horticulture": { pass: "horticulture@12345", role: "user", dept: "HORTICULTURE" },
+            "informationtechnology": { pass: "it@12345", role: "user", dept: "I.T" },
+            "informationtechnologybasera": { pass: "itbasera@12345", role: "user", dept: "I.T BASERA" },
+            "langar": { pass: "langar@12345", role: "user", dept: "LANGAR" },
+            "faridabad": { pass: "faridabad@12345", role: "user", dept: "FARIDABAD" },
+            "luggage": { pass: "luggage@12345", role: "user", dept: "LUGGAGE" },
+            "maintenance": { pass: "maintenance@12345", role: "user", dept: "MAINTENANCE" },
+            "medical": { pass: "medical@12345", role: "user", dept: "MEDICAL" },
+            "naamdaan": { pass: "naamdaan@12345", role: "user", dept: "NAAMDAAN" },
+            "oldenclosure": { pass: "oe@12345", role: "user", dept: "O.E" },
+            "pathi": { pass: "pathi@12345", role: "user", dept: "PATHI" },
+            "purchase": { pass: "purchase@12345", role: "user", dept: "PURCHASE" },
+            "railway": { pass: "railway@12345", role: "user", dept: "RAILWAY" },
+            "reception": { pass: "reception@12345", role: "user", dept: "RECEPTION" },
+            "sanitation": { pass: "sanitation@12345", role: "user", dept: "SANITATION" },
+            "satsangkarta": { pass: "satsangkarta@12345", role: "user", dept: "SATSANG KARTA" },
+            "securitybasera": { pass: "securitybasera@12345", role: "user", dept: "SECURITY BASERA" },
+            "sewacollection": { pass: "sewacollection@12345", role: "user", dept: "SEWA COLLECTION" },
+            "sewasamiti": { pass: "sewasamiti@12345", role: "user", dept: "SEWA SAMITI" },
+            "traffic": { pass: "traffic@12345", role: "user", dept: "TRAFFIC" },
+            "water": { pass: "water@12345", role: "user", dept: "WATER" }
+        };
+
+        // SET YOUR LOCK DATE HERE (Format: YYYY-MM-DD)
+// The system will lock at 12:00 AM on this day.
+const LOCK_DATE = "2026-02-19"; 
+
+function isLocked() { 
+    return new Date() >= new Date(LOCK_DATE); 
+}
+
+function checkLock() {
+    if (!isLocked()) return;
+    
+    // Disable all Submit Buttons
+    const subBtns = ['entrySubmitBtn', 'canteenSubmitBtn', 'invSubmitBtn', 'accoSubmitBtn', 'shamSubmitBtn'];
+    subBtns.forEach(id => {
+        const b = document.getElementById(id);
+        if(b) { b.disabled = true; b.innerText = "SYSTEM LOCKED"; b.style.background = "#64748b"; }
+    });
+
+    // Hide all Add buttons
+    document.querySelectorAll('.btn-add-row-pill, #invAddBtn').forEach(b => b.style.display = 'none');
+
+    // Hide Edit/Delete icons via CSS
+    const style = document.createElement('style');
+    style.innerHTML = '.btn-edit-history, .btn-delete { display: none !important; }';
+    document.head.appendChild(style);
+}
+
+        const SHAMIANA_ITEMS = {
+            "Lathi": ["3 feet", "4 feet", "5 feet", "7 feet","8 feet"],
+            "Kannat Pole": ["9 feet"],
+            "Yellow Sua": ["Standard"],
+            "Jaal": ["Small", "Big"],
+            "Kannat": ["6 feet", "8 feet"],
+            "Hammer": ["Standard"],
+            "Axle": ["Standard"],
+            "Yellow Patti": ["Standard"],
+            "Channel Rope": ["Standard"],
+            "Yellow Kannat Rope": ["Standard"],
+            "Shamiana": ["Standard"],
+            "Jhaajham": ["Standard"],
+            "Taat": ["Standard"],
+            "Blue Curtain": ["Standard"],
+            "Chol Daari": ["Standard"],
+            "Hut": ["Standard"],
+        };
+
+        const LOCATIONS = ["C-1", "C-2", "C-3", "C-4", "C-5", "C-6", "Phase-IV", "1A", "2A / 2B", "3A / 3B", "5A", "6A / 6B", "7A / 7B", "8A / 8B / 8C", "9A ", "10A / 10B / 10C", "Basera", "Field Office","Self","Admin Block","Others",];
+        const DAYS = ["Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+        const MEALS = ["Breakfast", "Lunch", "Dinner"];
+
+        let currentUser = null, inventoryQueue = [];
+        let editState = { active: false, rowId: null, module: null };
+
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type === 'error' ? 'error' : ''}`;
+            toast.innerHTML = `<i class="bi ${type === 'error' ? 'bi-exclamation-triangle-fill' : 'bi-check-circle-fill'}"></i> ${message}`;
+            container.appendChild(toast);
+            setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 500); }, 3000);
+        }
+
+        // Fixes Time string from Google Sheets for the HTML5 time input
+        function formatTimeForInput(raw) {
+            if (!raw) return "";
+            if (raw.includes('T')) return raw.split('T')[1].substring(0, 5);
+            return raw;
+        }
+
+        function triggerEdit(module, encodedData) {
+            const data = JSON.parse(decodeURIComponent(encodedData));
+            editState = { active: true, rowId: data[0], module: module };
+            showToast("Loading Data for Edit...", "success"); 
+
+            if(module === 'log') {
+                navigate('entry');
+                document.getElementById('coordName').value = data[3];
+                document.getElementById('coordMobile').value = data[4];
+                document.getElementById('entryRowsContainer').innerHTML = "";
+                addEntryRow();
+                const row = document.querySelector('.crystal-row');
+                row.querySelector('.in-day').value = data[5];
+                row.querySelector('.in-meal').value = data[6];
+                row.querySelector('.in-loc').value = data[2];
+                row.querySelector('.in-time').value = formatTimeForInput(data[10]);
+                row.querySelector('.in-sew').value = data[7];
+                row.querySelector('.in-pac').value = data[8];
+                row.querySelector('.in-loo').value = data[9];
+                if(row.querySelector('.in-remarks')) row.querySelector('.in-remarks').value = data[13] || "";
+                if(data[11] === "YES") {
+                    row.querySelector('.tea-trigger').checked = true;
+                    row.querySelector('.in-tea-cups').disabled = false;
+                    row.querySelector('.in-tea-cups').value = data[12];
+                }
+                document.getElementById('entrySubmitBtn').innerText = "UPDATE DATA";
+            }
+            else if(module === 'can') {
+                navigate('canteen');
+                document.getElementById('canCoord').value = data[2];
+                document.getElementById('canMobile').value = data[3];
+                document.getElementById('canRemarks').value = data[20] || "";
+                
+                const inputs = document.querySelectorAll('#canteenBody tr');
+                inputs.forEach(row => {
+                    const dayCell = row.querySelector('td:first-child').innerText;
+                    if(dayCell === data[4]) {
+                        row.querySelector('[data-field="tea_cups"]').value = data[5];
+                        row.querySelector('[data-field="tea_time"]').value = formatTimeForInput(data[6]);
+                        row.querySelector('[data-field="milk_cups"]').value = data[7];
+                        row.querySelector('[data-field="milk_time"]').value = formatTimeForInput(data[8]);
+                        row.querySelector('[data-field="poha_qty"]').value = data[9];
+                        row.querySelector('[data-field="poha_time"]').value = formatTimeForInput(data[10]);
+                        row.querySelector('[data-field="snack_qty"]').value = data[11];
+                        row.querySelector('[data-field="snack_time"]').value = formatTimeForInput(data[12]);
+                        row.querySelector('[data-field="fruit_drink"]').value = data[13];
+                        row.querySelector('[data-field="biscuits"]').value = data[14];
+                        row.querySelector('[data-field="biscuit_type"]').value = data[15];
+                        row.querySelector('[data-field="rusk"]').value = data[16];
+                        row.querySelector('[data-field="lunch"]').value = data[17];
+                        row.querySelector('[data-field="fruit"]').value = data[18];
+                        row.querySelector('[data-field="fruit_unit"]').value = data[19];
+                    }
+                });
+                document.getElementById('canteenSubmitBtn').innerText = "UPDATE DATA";
+            }
+            else if(module === 'acco') {
+                navigate('accommodation');
+                document.getElementById('acco-coord-male').value = data[2];
+                document.getElementById('acco-mobile-male').value = data[3];
+                document.getElementById('acco-coord-female').value = data[4];
+                document.getElementById('acco-mobile-female').value = data[5];
+                document.getElementById('acco-male').value = data[6];
+                document.getElementById('acco-female').value = data[7];
+                document.getElementById('accoSubmitBtn').innerText = "UPDATE DATA";
+            }
+            else if(module === 'sham') {
+                navigate('shamiana');
+                document.getElementById('sham-coord').value = data[2];
+                document.getElementById('sham-mobile').value = data[3];
+                document.getElementById('shamianaRowsContainer').innerHTML = "";
+                addShamianaRow();
+                const row = document.querySelector('#shamianaRowsContainer > div');
+                row.querySelector('.sh-item').value = data[4];
+                updateShamianaSizes(row.querySelector('.sh-item'));
+                row.querySelector('.sh-size').value = data[5];
+                row.querySelector('.sh-qty').value = data[6];
+                document.getElementById('shamSubmitBtn').innerText = "UPDATE DATA";
+            }
+            else if(module === 'inv') {
+                navigate('inventory');
+                document.getElementById('inv-loc').value = data[2];
+                document.getElementById('inv-article').value = data[3];
+                document.getElementById('inv-qty').value = data[4];
+                document.getElementById('invSubmitBtn').innerText = "UPDATE DATA";
+                document.getElementById('invSubmitBtn').classList.remove('hidden');
+                inventoryQueue = [{ loc: data[2], art: data[3], qty: data[4], id: Date.now() }];
+                renderQueue();
+            }
+        }
+
+        document.addEventListener('input', function (e) {
+            if (e.target.classList.contains('tel-input')) {
+                e.target.value = e.target.value.replace(/\D/g, '').slice(0, 10);
+            }
+        });
+
+        function toggleLangar() {
+            const sub = document.getElementById('langar-sub');
+            const parent = document.getElementById('nav-langar');
+            sub.classList.toggle('show');
+            parent.classList.toggle('active');
+        }
+
+        function cleanDisplayDetails(rawSummary) {
+            if (!rawSummary || typeof rawSummary !== 'string') return rawSummary;
+            return rawSummary.replace(/(\d{4}-\d{2}-\d{2}T(\d{2}:\d{2}):\d{2}\.\d{3}Z)/g, "$2");
+        }
+
+        async function fetchWithRetry(url) {
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error("Sync Error");
+                return await response.json();
+            } catch (e) {
+                console.error(e);
+                return null;
+            }
+        }
+
+        async function refreshHistory(isAuto = false) {
+            const body = document.getElementById('logHistoryBody');
+            if(!isAuto) body.innerHTML = '<tr><td colspan="8" style="padding:20px; text-align:center;">📡 Loading...</td></tr>';
+            const data = await fetchWithRetry(LOGISTICS_URL);
+            if (!data) { if(!isAuto) body.innerHTML = '<tr><td colspan="8" style="padding:20px; text-align:center; color:red;">❌ Sync Error.</td></tr>'; return; }
+            body.innerHTML = "";
+            data.filter(row => row[1] === currentUser.dept || currentUser.dept === "All Command").reverse().forEach(row => {
+                const hasTea = row[11] === "YES";
+                const teaDisplay = hasTea ? `<br><span style="color:#b45309; font-size:0.8rem; font-weight:800;">☕ Tea: ${row[12]} Cups</span>` : "";
+                const encoded = encodeURIComponent(JSON.stringify(row));
+                const syncValue = row[0] || "N/A";
+
+                body.innerHTML += `<tr>
+                    <td style="padding:20px;">${syncValue}</td>
+                    <td style="padding:20px;">${row[5]}</td> 
+                    <td style="padding:20px; font-weight:800; color:var(--maroon);">${row[2]}</td> 
+                    <td style="padding:20px; font-weight:700;">${cleanDisplayDetails(row[10])}</td> 
+                    <td style="padding:20px;">${row[7]}S / ${row[8]}P / ${row[9]}L ${teaDisplay}</td>
+                    <td style="padding:20px; font-size: 0.85rem; color: #64748b;">${row[13] || '-'}</td>
+                    <td style="padding:20px; color:#10b981; font-weight:800;">✅ SYNCED</td>
+                    <td style="padding:20px;"><button class="btn-edit-history" onclick="triggerEdit('log', '${encoded}')"><i class="bi bi-pencil-square"></i></button></td>
+                </tr>`;
+            });
+        }
+
+        async function refreshCanteenHistory(isAuto = false) {
+            const body = document.getElementById('canHistoryBody');
+            if(!isAuto) body.innerHTML = '<tr><td colspan="7" style="padding:20px; text-align:center;">📡 Loading...</td></tr>';
+            const data = await fetchWithRetry(CANTEEN_URL);
+            if (!data) { if(!isAuto) body.innerHTML = '<tr><td colspan="7" style="padding:20px; text-align:center; color:red;">❌ Sync Error.</td></tr>'; return; }
+            body.innerHTML = "";
+            data.filter(row => row[1] === currentUser.dept || currentUser.dept === "All Command").reverse().forEach(row => {
+                let itemsSummary = [];
+                if(row[5] > 0) itemsSummary.push(`Tea: ${row[5]}c @ ${row[6]}`);
+                if(row[7] > 0) itemsSummary.push(`Milk: ${row[7]}c @ ${row[8]}`);
+                if(row[9] > 0) itemsSummary.push(`Poha: ${row[9]}q @ ${row[10]}`);
+                if(row[11] > 0) itemsSummary.push(`Snack: ${row[11]}q @ ${row[12]}`);
+                if(row[13] > 0) itemsSummary.push(`Juice: ${row[13]}`);
+                if(row[14] > 0) itemsSummary.push(`Bisc: ${row[14]} (${row[15] || ''})`);
+                if(row[16] > 0) itemsSummary.push(`Rusk: ${row[16]}`);
+                if(row[17] > 0) itemsSummary.push(`Pack Lunch: ${row[17]}`);
+                if(row[18] > 0) itemsSummary.push(`Fruit: ${row[18]} ${row[19] || ''}`);
+
+                const finalDetails = cleanDisplayDetails(itemsSummary.join(' | ') || 'No items selected');
+                const syncValue = row[0] || "N/A";
+                const remarksValue = row[20] || "-";
+                const encoded = encodeURIComponent(JSON.stringify(row));
+
+                body.innerHTML += `<tr>
+                    <td style="padding:20px;">${syncValue}</td>
+                    <td style="padding:20px; font-weight:700; color:var(--maroon);">${row[4]}</td>
+                    <td style="padding:20px; font-weight:700;">${row[2]}</td>
+                    <td style="padding:20px; font-size:0.85rem; line-height:1.6; color:#475569;">${finalDetails}</td>
+                    <td style="padding:20px; font-style: italic; color: #64748b;">${remarksValue}</td>
+                    <td style="padding:20px; color:#10b981; font-weight:800;">✅ SYNCED</td>
+                    <td style="padding:20px;"><button class="btn-edit-history" onclick="triggerEdit('can', '${encoded}')"><i class="bi bi-pencil-square"></i></button></td>
+                </tr>`;
+            });
+        }
+
+        async function refreshArticleHistory(isAuto = false) {
+            const body = document.getElementById('invHistoryBody');
+            if(!isAuto) body.innerHTML = '<tr><td colspan="6" style="padding:20px; text-align:center;">📡 Loading...</td></tr>';
+            const data = await fetchWithRetry(ARTICLES_URL);
+            if (!data) { if(!isAuto) body.innerHTML = '<tr><td colspan="6" style="padding:20px; text-align:center; color:red;">❌ Sync Error.</td></tr>'; return; }
+            body.innerHTML = "";
+            data.filter(row => row[1] === currentUser.dept || currentUser.dept === "All Command").reverse().forEach(row => {
+                const encoded = encodeURIComponent(JSON.stringify(row));
+                const syncValue = row[0] || "N/A";
+                body.innerHTML += `<tr>
+                    <td style="padding:20px;">${syncValue}</td>
+                    <td style="padding:20px; font-weight:700;">${row[2]}</td>
+                    <td style="padding:20px; font-weight:700; color:var(--maroon);">${row[3]}</td>
+                    <td style="padding:20px;">${row[4]}</td>
+                    <td style="padding:20px; color:#10b981; font-weight:800;">✅ SYNCED</td>
+                    <td style="padding:20px;"><button class="btn-edit-history" onclick="triggerEdit('inv', '${encoded}')"><i class="bi bi-pencil-square"></i></button></td>
+                </tr>`;
+            });
+        }
+
+        async function refreshAccoHistory(isAuto = false) {
+            const body = document.getElementById('accoHistoryBody');
+            if(!isAuto) body.innerHTML = '<tr><td colspan="7" style="padding:20px; text-align:center;">📡 Loading...</td></tr>';
+            const data = await fetchWithRetry(ACCO_URL);
+            if (!data) { if(!isAuto) body.innerHTML = '<tr><td colspan="7" style="padding:20px; text-align:center; color:red;">❌ Sync Error.</td></tr>'; return; }
+            body.innerHTML = "";
+            data.filter(row => row[1] === currentUser.dept || currentUser.dept === "All Command").reverse().forEach(row => {
+                const encoded = encodeURIComponent(JSON.stringify(row));
+                const syncValue = row[0] || "N/A";
+                body.innerHTML += `<tr>
+                    <td style="padding:20px;">${syncValue}</td>
+                    <td style="padding:20px; font-weight:700;">${row[2]}</td>
+                    <td style="padding:20px; font-weight:700;">${row[4]}</td>
+                    <td style="padding:20px; font-weight:800; color:var(--maroon);">${row[6]}</td>
+                    <td style="padding:20px; font-weight:800; color:var(--maroon);">${row[7]}</td>
+                    <td style="padding:20px; color:#10b981; font-weight:800;">✅ SYNCED</td>
+                    <td style="padding:20px;"><button class="btn-edit-history" onclick="triggerEdit('acco', '${encoded}')"><i class="bi bi-pencil-square"></i></button></td>
+                </tr>`;
+            });
+        }
+
+        async function refreshShamHistory(isAuto = false) {
+            const body = document.getElementById('shamHistoryBody');
+            if(!isAuto) body.innerHTML = '<tr><td colspan="7" style="padding:20px; text-align:center;">📡 Loading...</td></tr>';
+            const data = await fetchWithRetry(SHAMIANA_URL);
+            if (!data) { if(!isAuto) body.innerHTML = '<tr><td colspan="7" style="padding:20px; text-align:center; color:red;">❌ Sync Error.</td></tr>'; return; }
+            body.innerHTML = "";
+            data.filter(row => row[1] === currentUser.dept || currentUser.dept === "All Command").reverse().forEach(row => {
+                const encoded = encodeURIComponent(JSON.stringify(row));
+                const syncValue = row[0] || "N/A";
+                body.innerHTML += `<tr>
+                    <td style="padding:20px;">${syncValue}</td>
+                    <td style="padding:20px; font-weight:700;">${row[2]}</td>
+                    <td style="padding:20px; font-weight:800; color:var(--maroon);">${row[4]}</td>
+                    <td style="padding:20px;">${row[5]}</td>
+                    <td style="padding:20px; font-weight:800; color:var(--maroon);">${row[6]}</td>
+                    <td style="padding:20px; color:#10b981; font-weight:800;">✅ SYNCED</td>
+                    <td style="padding:20px;"><button class="btn-edit-history" onclick="triggerEdit('sham', '${encoded}')"><i class="bi bi-pencil-square"></i></button></td>
+                </tr>`;
+            });
+        }
+
+        window.onload = () => {
+            const saved = sessionStorage.getItem('mealopsUser');
+            if (saved) { currentUser = JSON.parse(saved); launchApp(); }
+        };
+
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const u = document.getElementById('username').value.toLowerCase().trim();
+            const p = document.getElementById('password').value;
+            const errorBox = document.getElementById('login-error');
+            if (ACCOUNTS[u] && ACCOUNTS[u].pass === p) {
+                errorBox.style.display = 'none';
+                currentUser = ACCOUNTS[u]; sessionStorage.setItem('mealopsUser', JSON.stringify(currentUser)); launchApp();
+            } else { 
+                errorBox.style.display = 'block'; errorBox.style.animation = 'none'; errorBox.offsetHeight; errorBox.style.animation = 'errorShake 0.4s ease';
+            }
+        });
+
+        function handleLogout() { sessionStorage.removeItem('mealopsUser'); sessionStorage.removeItem('lastActivePage'); location.reload(); }
+
+        function launchApp() {
+            checkLock();
+            if (currentUser.role === "admin") {
+                showToast("Accessing Command Center...", "success");
+                setTimeout(() => { window.location.href = "admin.html"; }, 1000);
+                return;
+            }
+
+            document.getElementById('login-overlay').classList.add('hidden');
+            document.getElementById('app-wrapper').classList.remove('hidden');
+            document.getElementById('locked-dept-name').innerText = currentUser.dept;
+            document.getElementById('dept-input-container').innerHTML = `<div class="input-group"><label>Dept</label><input type="text" value="${currentUser.dept}" readonly></div>`;
+            
+            const locOptions = `<option value="" disabled selected>Choose Location...</option>` + LOCATIONS.map(l => `<option>${l}</option>`).join('');
+            document.getElementById('inv-loc').innerHTML = locOptions;
+            
+            if(!document.getElementById('entryRowsContainer').children.length) addEntryRow();
+            if(!document.getElementById('shamianaRowsContainer').children.length) addShamianaRow();
+            
+            const canteenBody = document.getElementById('canteenBody');
+            if(!canteenBody.children.length) {
+                DAYS.forEach(day => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td style="padding:15px; font-weight:800; color:var(--maroon); text-align:center;">${day}</td>
+                        <td><input type="number" class="can-in" data-day="${day}" data-field="tea_cups"></td>
+                        <td><input type="time" class="can-in" data-day="${day}" data-field="tea_time"></td>
+                        <td><input type="number" class="can-in" data-day="${day}" data-field="milk_cups"></td>
+                        <td><input type="time" class="can-in" data-day="${day}" data-field="milk_time"></td>
+                        <td><input type="number" class="can-in" data-day="${day}" data-field="poha_qty"></td>
+                        <td><input type="time" class="can-in" data-day="${day}" data-field="poha_time" onchange="validateCanteenTime(this, '03:00', '12:00')"></td>
+                        <td><input type="number" class="can-in" data-day="${day}" data-field="snack_qty"></td>
+                        <td><input type="time" class="can-in" data-day="${day}" data-field="snack_time" onchange="validateCanteenTime(this, '15:00', '18:00')"></td>
+                        <td><input type="number" class="can-in" data-day="${day}" data-field="fruit_drink"></td>
+                        <td>
+                            <div style="display:flex; gap:4px;">
+                                <input type="number" class="can-in" data-day="${day}" data-field="biscuits" placeholder="Qty">
+                                <select class="can-in" data-day="${day}" data-field="biscuit_type">
+                                    <option>Sweet</option>
+                                    <option>Namkeen</option>
+                                </select>
+                            </div>
+                        </td>
+                        <td><input type="number" class="can-in" data-day="${day}" data-field="rusk"></td>
+                        <td><input type="number" class="can-in" data-day="${day}" data-field="lunch"></td>
+                        <td>
+                            <div style="display:flex; gap:4px;">
+                                <input type="number" class="can-in" data-day="${day}" data-field="fruit" placeholder="Qty">
+                                <select class="can-in" data-day="${day}" data-field="fruit_unit">
+                                    <option>Kgs</option>
+                                    <option>Dozens</option>
+                                </select>
+                            </div>
+                        </td>
+                    `;
+                    canteenBody.appendChild(row);
+                });
+            }
+
+            const lastPage = sessionStorage.getItem('lastActivePage');
+            if (lastPage) navigate(lastPage);
+            else navigate('entry');
+        }
+
+        function closeCanteenAlert() { document.getElementById('canteen-alert').classList.add('hidden'); }
+
+        function validateCanteenTime(input, minTime, maxTime) {
+            const selectedTime = input.value;
+            if (!selectedTime) return;
+            if (selectedTime < minTime || selectedTime > maxTime) {
+                input.classList.add('time-locked-error');
+                showToast(`Forbidden Time! Permitted: ${minTime} to ${maxTime}`, 'error');
+                setTimeout(() => {
+                    input.value = "";
+                    input.classList.remove('time-locked-error');
+                }, 2000);
+            }
+        }
+
+        function navigate(v) {
+            document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById(`page-${v}`).classList.remove('hidden');
+            document.getElementById(`nav-${v}`).classList.add('active');
+            
+            if(v === 'entry' || v === 'inventory') {
+                document.getElementById('nav-langar').classList.add('active');
+                document.getElementById('langar-sub').classList.add('show');
+            } else {
+                document.getElementById('nav-langar').classList.remove('active');
+            }
+
+            if(v === 'canteen') { document.getElementById('canteen-alert').classList.remove('hidden'); }
+
+            const banner = document.getElementById('global-coordinators-banner');
+            if(v === 'history') {
+                banner.classList.add('hidden');
+                refreshHistory(); refreshCanteenHistory(); refreshArticleHistory(); refreshAccoHistory(); refreshShamHistory();
+            } else if(v === 'accommodation') {
+                banner.classList.remove('hidden');
+                banner.innerHTML = `<span>Accommodation Coordinators :</span><span>📞 Jatinder Pal Singh:9811560175</span><span>📞 Anita Kaushik:8800497557</span>`;
+            } else if(v === 'shamiana') {
+                banner.classList.remove('hidden');
+                banner.innerHTML = `<span>Shamiana Coordinator :📞 Mukesh Taneja: 8800497391 </span>`;
+            } else if(v === 'canteen') {
+                banner.classList.remove('hidden');
+                banner.innerHTML = `<span>Canteen Coordinators :</span><span>📞 Yash Paul Dhingra:9311001084</span><span>📞 Naveen Dembla:9811400211</span>`;
+            } else {
+                banner.classList.remove('hidden');
+                banner.innerHTML = `<span>Langar Coordinators :</span><span>📞 Mahesh Malik: 8800794345</span><span>📞 Ashok Bajaj: 9911296112</span>`;
+            }
+            sessionStorage.setItem('lastActivePage', v);
+        }
+
+        function switchHistoryTab(t) {
+            ['log', 'can', 'inv', 'acco', 'sham'].forEach(id => {
+                document.getElementById(`${id}-box`).classList.toggle('hidden', id !== t);
+                document.getElementById(`tab-${id}`).classList.toggle('active', id === t);
+            });
+        }
+
+        function addEntryRow() {
+            const row = document.createElement('div');
+            row.className = 'crystal-row';
+            row.innerHTML = `
+                <select class="in-day" required><option value="" disabled selected>Day</option>${DAYS.map(d=>`<option>${d}</option>`).join('')}</select>
+                <select class="in-meal" required><option value="" disabled selected>Meal</option>${MEALS.map(m=>`<option>${m}</option>`).join('')}</select>
+                <select class="in-loc" required><option value="" disabled selected>Location</option>${LOCATIONS.map(l=>`<option>${l}</option>`).join('')}</select>
+                <input type="time" class="in-time" required>
+                <input type="number" class="in-sew" placeholder="Sewadars">
+                <input type="number" class="in-pac" placeholder="Packed">
+                <input type="number" class="in-loo" placeholder="Loose">
+                
+                <div class="tea-logic-wrap">
+                    <label>TEA</label>
+                    <input type="checkbox" class="tea-trigger" onchange="this.parentElement.nextElementSibling.disabled = !this.checked">
+                </div>
+                <input type="number" class="in-tea-cups" placeholder="Cups" disabled>
+                <input type="text" class="in-remarks" placeholder="Remarks (Optional)">
+                <button type="button" onclick="this.parentElement.remove()" style="color:red;border:none;background:none;font-size:1.5rem;"><i class="bi bi-x-circle"></i></button>
+            `;
+            document.getElementById('entryRowsContainer').appendChild(row);
+        }
+
+        function addShamianaRow() {
+            const container = document.getElementById('shamianaRowsContainer');
+            const row = document.createElement('div');
+            row.style.cssText = "display:grid; grid-template-columns: 2fr 1.5fr 1fr 40px; gap:12px; background:white; padding:15px; border-radius:12px; align-items:center; border:1px solid var(--border); margin-bottom:10px;";
+            const itemOptions = Object.keys(SHAMIANA_ITEMS).map(i => `<option>${i}</option>`).join('');
+            row.innerHTML = `<select class="sh-item" onchange="updateShamianaSizes(this)" required><option value="" disabled selected>Item</option>${itemOptions}</select><select class="sh-size" required><option value="" disabled selected>Size</option></select><input type="number" class="sh-qty" placeholder="Qty" value="0"><button type="button" onclick="this.parentElement.remove()" style="color:red;border:none;background:none;font-size:1.5rem;"><i class="bi bi-trash"></i></button>`;
+            container.appendChild(row);
+        }
+
+        function updateShamianaSizes(select) {
+            const sizeSelect = select.parentElement.querySelector('.sh-size');
+            const item = select.value;
+            const sizes = SHAMIANA_ITEMS[item];
+            sizeSelect.innerHTML = sizes.map(s => `<option>${s}</option>`).join('');
+        }
+
+        document.getElementById('canteenForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const coord = document.getElementById('canCoord').value.trim();
+            const mobile = document.getElementById('canMobile').value.trim();
+            const remarks = document.getElementById('canRemarks').value.trim();
+            if (!coord || !mobile) return showToast("Coordinator details required!", "error");
+            if (mobile.length !== 10) return showToast("Mobile must be EXACTLY 10 digits!", "error");
+            
+            const inputs = document.querySelectorAll('#canteenBody .can-in');
+            const groupedData = {};
+            inputs.forEach(input => {
+                const day = input.dataset.day;
+                if(!groupedData[day]) groupedData[day] = { 
+                    editId: editState.active ? editState.rowId : null,
+                    dept: currentUser.dept, coord, mobile, day, remarks: remarks 
+                };
+                groupedData[day][input.dataset.field] = input.value || 0;
+            });
+            showToast("Syncing Canteen Data...");
+            fetch(CANTEEN_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ entries: Object.values(groupedData) }) }).then(() => {
+                showToast("Canteen Data Synced!");
+                editState = { active: false, rowId: null, module: null };
+                document.getElementById('canteenSubmitBtn').innerText = "SUBMIT";
+                this.reset(); navigate('history'); switchHistoryTab('can');
+                setTimeout(() => refreshCanteenHistory(true), 1500);
+            });
+        });
+
+        document.getElementById('shamianaForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const coord = document.getElementById('sham-coord').value.trim();
+            const mobile = document.getElementById('sham-mobile').value.trim();
+            if (!coord || !mobile) return showToast("Details Required!", "error");
+            if (mobile.length !== 10) return showToast("Mobile must be EXACTLY 10 digits!", "error");
+            const rows = document.querySelectorAll('#shamianaRowsContainer > div');
+            let data = [];
+            rows.forEach(r => { data.push({ 
+                editId: editState.active ? editState.rowId : null,
+                dept: currentUser.dept, coord, mobile, item: r.querySelector('.sh-item').value, size: r.querySelector('.sh-size').value, qty: r.querySelector('.sh-qty').value 
+            }); });
+            showToast("Syncing...");
+            this.reset(); navigate('history'); switchHistoryTab('sham');
+            fetch(SHAMIANA_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ entries: data }) }).then(() => { 
+                showToast("Synced!"); 
+                editState = { active: false, rowId: null, module: null };
+                document.getElementById('shamSubmitBtn').innerText = "SUBMIT";
+                setTimeout(() => refreshShamHistory(true), 1500); 
+            });
+        });
+
+        document.getElementById('bulkForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            if(isLocked()) return showToast("System Locked", "error");
+            const coordName = document.getElementById('coordName').value.trim();
+            const coordMobile = document.getElementById('coordMobile').value.trim();
+            if (!coordName || !coordMobile) return showToast("Required!", "error");
+            if (coordMobile.length !== 10) return showToast("Mobile must be EXACTLY 10 digits!", "error");
+            const rows = document.querySelectorAll('.crystal-row');
+            let rowData = [];
+            rows.forEach(row => {
+                const day = row.querySelector('.in-day').value, meal = row.querySelector('.in-meal').value, loc = row.querySelector('.in-loc').value, time = row.querySelector('.in-time').value;
+                if (!day || !meal || !loc || !time) return;
+                rowData.push({ 
+                    editId: editState.active ? editState.rowId : null,
+                    dept: currentUser.dept, loc, coordName, coordMobile, day, meal, time,
+                    sew: parseInt(row.querySelector('.in-sew').value) || 0, 
+                    pac: parseInt(row.querySelector('.in-pac').value) || 0, 
+                    loo: parseInt(row.querySelector('.in-loo').value) || 0,
+                    teaReq: row.querySelector('.tea-trigger').checked ? "YES" : "NO",
+                    teaCups: parseInt(row.querySelector('.in-tea-cups').value) || 0,
+                    remarks: row.querySelector('.in-remarks') ? row.querySelector('.in-remarks').value : ""
+                });
+            });
+            showToast("Syncing...");
+            document.getElementById('coordName').value = ""; document.getElementById('coordMobile').value = "";
+            document.getElementById('entryRowsContainer').innerHTML = ""; addEntryRow();
+            fetch(LOGISTICS_URL, { method: 'POST', body: JSON.stringify({ entries: rowData }) }).then(() => { 
+                editState = { active: false, rowId: null, module: null };
+                document.getElementById('entrySubmitBtn').innerText = "SUBMIT DATA";
+                setTimeout(() => refreshHistory(true), 1500); 
+            }); 
+            navigate('history'); switchHistoryTab('log');
+        });
+
+        function addToQueue() {
+            const locEl = document.getElementById('inv-loc');
+            const artEl = document.getElementById('inv-article');
+            const qtyEl = document.getElementById('inv-qty');
+            if(!locEl.value || !artEl.value || !qtyEl.value) return showToast("Fill details!", "error");
+            inventoryQueue.push({ loc: locEl.value, art: artEl.value, qty: qtyEl.value, id: Date.now() }); 
+            renderQueue();
+            locEl.selectedIndex = 0; artEl.selectedIndex = 0; qtyEl.value = "";
+        }
+
+        function renderQueue() {
+            document.getElementById('inv-queue-body').innerHTML = inventoryQueue.map(i => `<div class="queue-item"><span style="font-weight:700">${i.loc}</span><span style="font-weight:700">${i.art}</span><span style="background:#fee2e2; color:var(--maroon); padding:6px 14px; border-radius:10px; font-weight:800; width:fit-content">${i.qty}</span><button class="btn-delete" onclick="inventoryQueue = inventoryQueue.filter(x => x.id !== ${i.id}); renderQueue(); event.stopPropagation();"><i class="bi bi-trash3-fill"></i></button></div>`).join('');
+            document.getElementById('invSubmitBtn').classList.toggle('hidden', inventoryQueue.length === 0);
+        }
+        
+        function submitInventory() {
+            if (inventoryQueue.length === 0) return;
+            showToast("Submitting...");
+            const payload = { 
+                entries: inventoryQueue.map(i => ({ 
+                    editId: editState.active ? editState.rowId : null,
+                    dept: currentUser.dept, 
+                    loc: i.loc, 
+                    art: i.art, 
+                    qty: i.qty 
+                })) 
+            };
+            inventoryQueue = []; renderQueue(); navigate('history'); switchHistoryTab('inv');
+            fetch(ARTICLES_URL, { method: 'POST', body: JSON.stringify(payload) }).then(() => { 
+                editState = { active: false, rowId: null, module: null };
+                document.getElementById('invSubmitBtn').innerText = "SUBMIT";
+                setTimeout(() => refreshArticleHistory(true), 1500); 
+            });
+        }
+
+        document.getElementById('accommodationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const coordMale = document.getElementById('acco-coord-male').value.trim();
+            const mobileMale = document.getElementById('acco-mobile-male').value.trim();
+            const coordFemale = document.getElementById('acco-coord-female').value.trim();
+            const mobileFemale = document.getElementById('acco-mobile-female').value.trim();
+
+            if (!coordMale || !coordFemale) return showToast("Details Required!", "error");
+            if (mobileMale.length !== 10 || mobileFemale.length !== 10) return showToast("All Mobiles must be EXACTLY 10 digits!", "error");
+            
+            const payload = { 
+                entries: [{
+                    editId: editState.active ? editState.rowId : null,
+                    dept: currentUser.dept, 
+                    maleCoord: coordMale, 
+                    maleMobile: mobileMale, 
+                    femaleCoord: coordFemale, 
+                    femaleMobile: mobileFemale, 
+                    male: document.getElementById('acco-male').value, 
+                    female: document.getElementById('acco-female').value
+                }] 
+            };
+            
+            showToast("Syncing...");
+            this.reset(); navigate('history'); switchHistoryTab('acco');
+            fetch(ACCO_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) }).then(() => { 
+                showToast("Synced!"); 
+                editState = { active: false, rowId: null, module: null };
+                document.getElementById('accoSubmitBtn').innerText = "SUBMIT";
+                setTimeout(() => refreshAccoHistory(true), 1500); 
+            });
+        });
+
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordField = document.getElementById('password');
+        togglePassword.addEventListener('click', function () {
+            const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordField.setAttribute('type', type);
+            this.classList.toggle('bi-eye'); this.classList.toggle('bi-eye-slash');
+        }); 
+
+        function exportActiveTableToCSV() {
+            const activeTab = document.querySelector('.tab-btn.active').id.replace('tab-', '');
+            const tableId = activeTab + '-box';
+            const table = document.getElementById(tableId).querySelector('table');
+            if (!table) return showToast("No table data found to export", "error");
+            let csv = [];
+            const rows = table.querySelectorAll("tr");
+            for (let i = 0; i < rows.length; i++) {
+                let row = [], cols = rows[i].querySelectorAll("td, th");
+                for (let j = 0; j < cols.length - 1; j++) {
+                    let data = cols[j].innerText.replace(/(\r\n|\n|\r)/gm, " ").replace(/(\s\s+)/gm, " ").trim();
+                    data = data.replace(/"/g, '""'); 
+                    row.push('"' + data + '"');
+                }
+                csv.push(row.join(","));
+            }
+            const csvContent = "data:text/csv;charset=utf-8," + csv.join("\n");
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            const timestamp = new Date().toLocaleDateString().replace(/\//g, '-');
+            link.setAttribute("download", `MealOps_${activeTab}_History_${timestamp}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            showToast(`${activeTab.toUpperCase()} history exported!`);
+        }
+    </script>
+</body>
+</html>
